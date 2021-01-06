@@ -1,17 +1,22 @@
+namespace SpriteKind {
+    export const Object = SpriteKind.create()
+    export const GroundObject = SpriteKind.create()
+}
 function make_rng (seed: number, x: number, y: number) {
     return Random.createRNG(parseFloat("" + seed + x + y))
 }
 function generate_chunk (x: number, y: number) {
+    clear_chunk()
     chunk_rng = make_rng(user_seed, x, y)
     biome_number = chunk_rng.randomRange(0, 99)
     if (biome_number < 30) {
-        scene.setBackgroundColor(7)
+        make_plains()
     } else if (biome_number < 60) {
-        scene.setBackgroundColor(7)
+        make_forest()
     } else if (biome_number < 80) {
-        scene.setBackgroundColor(6)
+        make_dark_forest()
     } else {
-        scene.setBackgroundColor(13)
+        make_desert()
     }
 }
 function make_main_player () {
@@ -287,10 +292,97 @@ function make_main_player () {
     character.rule(Predicate.NotMoving, Predicate.FacingRight)
     )
 }
+function clear_chunk () {
+    for (let sprite of sprites.allOfKind(SpriteKind.GroundObject)) {
+        sprite.destroy()
+    }
+    for (let sprite of sprites.allOfKind(SpriteKind.Object)) {
+        sprite.destroy()
+    }
+}
+function make_plains () {
+    scene.setBackgroundColor(7)
+    for (let y = 0; y <= (scene.screenHeight() - 1) / 2; y++) {
+        for (let x = 0; x <= (scene.screenWidth() - 1) / 2; x++) {
+            if (chunk_rng.percentChance(1)) {
+                object_number = chunk_rng.randomRange(0, 99)
+                if (object_number < 25) {
+                    sprite_object = sprites.create(sprites.castle.tileGrass1, SpriteKind.GroundObject)
+                } else if (object_number < 50) {
+                    sprite_object = sprites.create(sprites.castle.tileGrass3, SpriteKind.GroundObject)
+                } else if (object_number < 75) {
+                    sprite_object = sprites.create(sprites.castle.tileGrass2, SpriteKind.GroundObject)
+                } else {
+                    if (chunk_rng.percentChance(20)) {
+                        sprite_object = sprites.create(sprites.duck.tree, SpriteKind.Object)
+                    } else if (chunk_rng.percentChance(25)) {
+                        sprite_object = sprites.create(sprites.castle.treePine, SpriteKind.Object)
+                    } else if (chunk_rng.percentChance(33)) {
+                        sprite_object = sprites.create(sprites.castle.treeOak, SpriteKind.Object)
+                    } else if (chunk_rng.percentChance(50)) {
+                        sprite_object = sprites.create(sprites.castle.treeSmallPine, SpriteKind.Object)
+                    } else {
+                        sprite_object = sprites.create(sprites.builtin.forestTree1, SpriteKind.Object)
+                    }
+                }
+                sprite_object.setPosition(x * 2, y * 2)
+            }
+        }
+    }
+}
+function make_forest () {
+    scene.setBackgroundColor(7)
+    for (let y = 0; y <= (scene.screenHeight() - 1) / 2; y++) {
+        for (let x = 0; x <= (scene.screenWidth() - 1) / 2; x++) {
+            if (chunk_rng.percentChance(1)) {
+                object_number = chunk_rng.randomRange(0, 99)
+                if (object_number < 20) {
+                    sprite_object = sprites.create(sprites.castle.tileGrass1, SpriteKind.GroundObject)
+                } else if (object_number < 40) {
+                    sprite_object = sprites.create(sprites.castle.tileGrass3, SpriteKind.GroundObject)
+                } else if (object_number < 60) {
+                    sprite_object = sprites.create(sprites.castle.tileGrass2, SpriteKind.GroundObject)
+                } else {
+                    if (chunk_rng.percentChance(20)) {
+                        sprite_object = sprites.create(sprites.duck.tree, SpriteKind.Object)
+                    } else if (chunk_rng.percentChance(25)) {
+                        sprite_object = sprites.create(sprites.castle.treePine, SpriteKind.Object)
+                    } else if (chunk_rng.percentChance(33)) {
+                        sprite_object = sprites.create(sprites.castle.treeOak, SpriteKind.Object)
+                    } else if (chunk_rng.percentChance(50)) {
+                        sprite_object = sprites.create(sprites.castle.treeSmallPine, SpriteKind.Object)
+                    } else {
+                        sprite_object = sprites.create(sprites.builtin.forestTree1, SpriteKind.Object)
+                    }
+                }
+                sprite_object.setPosition(x * 2, y * 2)
+            }
+        }
+    }
+}
+function make_dark_forest () {
+    scene.setBackgroundColor(6)
+}
+function make_desert () {
+    scene.setBackgroundColor(13)
+}
+let sprite_object: Sprite = null
+let object_number = 0
 let sprite_player: Sprite = null
 let biome_number = 0
 let chunk_rng: FastRandomBlocks = null
 let user_seed = 0
-user_seed = 0
+user_seed = 1234
 make_main_player()
 generate_chunk(0, 0)
+game.onUpdate(function () {
+    for (let sprite of sprites.allOfKind(SpriteKind.Player)) {
+        sprite.z = sprite.bottom
+    }
+    for (let sprite of sprites.allOfKind(SpriteKind.GroundObject)) {
+        sprite.z = -100000000000000000000
+    }
+    for (let sprite of sprites.allOfKind(SpriteKind.Object)) {
+        sprite.z = sprite.bottom
+    }
+})
