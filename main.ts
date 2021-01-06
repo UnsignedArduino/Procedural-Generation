@@ -301,6 +301,12 @@ function make_main_player () {
     character.rule(Predicate.NotMoving, Predicate.FacingRight)
     )
 }
+function fade_out (delay: number, blocking: boolean) {
+    color.startFade(color.Black, color.originalPalette, delay)
+    if (blocking) {
+        color.pauseUntilFadeDone()
+    }
+}
 function clear_chunk () {
     for (let sprite of sprites.allOfKind(SpriteKind.GroundObject)) {
         sprite.destroy()
@@ -310,6 +316,12 @@ function clear_chunk () {
     }
     for (let sprite of sprites.allOfKind(SpriteKind.Object)) {
         sprite.destroy()
+    }
+}
+function fade_in (delay: number, blocking: boolean) {
+    color.startFade(color.originalPalette, color.Black, delay)
+    if (blocking) {
+        color.pauseUntilFadeDone()
     }
 }
 function make_plains () {
@@ -450,9 +462,11 @@ forever(function () {
     if (sprite_player.top > scene.screenHeight() && !(updating_chunk)) {
         updating_chunk = true
         enable_controls(false)
+        fade_in(300, true)
         chunk_y += 1
         generate_chunk(chunk_x, chunk_y)
         sprite_player.bottom = 0
+        fade_out(300, false)
         sprite_player.vy = 50
         pause(300)
         sprite_player.vy = 0
@@ -464,9 +478,11 @@ forever(function () {
     if (sprite_player.right < 0 && !(updating_chunk)) {
         updating_chunk = true
         enable_controls(false)
+        fade_in(300, true)
         chunk_x += -1
         generate_chunk(chunk_x, chunk_y)
         sprite_player.left = scene.screenWidth()
+        fade_out(300, false)
         sprite_player.vx = -50
         pause(300)
         sprite_player.vx = 0
@@ -478,9 +494,11 @@ forever(function () {
     if (sprite_player.bottom < 0 && !(updating_chunk)) {
         updating_chunk = true
         enable_controls(false)
+        fade_in(300, true)
         chunk_y += -1
         generate_chunk(chunk_x, chunk_y)
         sprite_player.top = scene.screenHeight()
+        fade_out(300, false)
         sprite_player.vy = -50
         pause(300)
         sprite_player.vy = 0
@@ -492,9 +510,11 @@ forever(function () {
     if (sprite_player.left > scene.screenWidth() && !(updating_chunk)) {
         updating_chunk = true
         enable_controls(false)
+        fade_in(300, true)
         chunk_x += 1
         generate_chunk(chunk_x, chunk_y)
         sprite_player.right = 0
+        fade_out(300, false)
         sprite_player.vx = 50
         pause(300)
         sprite_player.vx = 0
