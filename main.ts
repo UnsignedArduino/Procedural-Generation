@@ -362,6 +362,31 @@ function make_forest () {
 }
 function make_dark_forest () {
     scene.setBackgroundColor(6)
+    for (let y = 0; y <= (scene.screenHeight() - 1) / 2; y++) {
+        for (let x = 0; x <= (scene.screenWidth() - 1) / 2; x++) {
+            if (chunk_rng.percentChance(1)) {
+                object_number = chunk_rng.randomRange(0, 99)
+                if (object_number < 20) {
+                    sprite_object = sprites.create(sprites.castle.tileDarkGrass1, SpriteKind.GroundObject)
+                } else if (object_number < 40) {
+                    sprite_object = sprites.create(sprites.castle.tileDarkGrass3, SpriteKind.GroundObject)
+                } else if (object_number < 60) {
+                    sprite_object = sprites.create(sprites.castle.tileDarkGrass2, SpriteKind.GroundObject)
+                } else {
+                    if (chunk_rng.percentChance(25)) {
+                        sprite_object = sprites.create(sprites.builtin.forestTree1, SpriteKind.Object)
+                    } else if (chunk_rng.percentChance(33)) {
+                        sprite_object = sprites.create(sprites.builtin.forestTree0, SpriteKind.Object)
+                    } else if (chunk_rng.percentChance(50)) {
+                        sprite_object = sprites.create(sprites.builtin.forestTree2, SpriteKind.Object)
+                    } else {
+                        sprite_object = sprites.create(sprites.builtin.forestTree3, SpriteKind.Object)
+                    }
+                }
+                sprite_object.setPosition(x * 2, y * 2)
+            }
+        }
+    }
 }
 function make_desert () {
     scene.setBackgroundColor(13)
