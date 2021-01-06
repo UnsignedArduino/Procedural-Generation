@@ -461,6 +461,20 @@ forever(function () {
     }
 })
 forever(function () {
+    if (sprite_player.right < 0 && !(updating_chunk)) {
+        updating_chunk = true
+        enable_controls(false)
+        chunk_x += -1
+        generate_chunk(chunk_x, chunk_y)
+        sprite_player.left = scene.screenWidth()
+        sprite_player.vx = -50
+        pause(300)
+        sprite_player.vx = 0
+        enable_controls(true)
+        updating_chunk = false
+    }
+})
+forever(function () {
     if (sprite_player.bottom < 0 && !(updating_chunk)) {
         updating_chunk = true
         enable_controls(false)
@@ -470,6 +484,20 @@ forever(function () {
         sprite_player.vy = -50
         pause(300)
         sprite_player.vy = 0
+        enable_controls(true)
+        updating_chunk = false
+    }
+})
+forever(function () {
+    if (sprite_player.left > scene.screenWidth() && !(updating_chunk)) {
+        updating_chunk = true
+        enable_controls(false)
+        chunk_x += 1
+        generate_chunk(chunk_x, chunk_y)
+        sprite_player.right = 0
+        sprite_player.vx = 50
+        pause(300)
+        sprite_player.vx = 0
         enable_controls(true)
         updating_chunk = false
     }
