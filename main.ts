@@ -437,7 +437,13 @@ let biome_number = 0
 let chunk_rng: FastRandomBlocks = null
 let output = 0
 let user_seed = 0
-user_seed = game.askForNumber("Enter a seed:")
+timer.background(function () {
+    fade_out(2000, true)
+})
+user_seed = Math.abs(game.askForNumber("Enter a seed:"))
+color.setPalette(
+color.Black
+)
 if (user_seed != user_seed) {
     user_seed = randint(0, 65535)
 }
@@ -446,6 +452,7 @@ let chunk_y = 0
 let updating_chunk = false
 make_main_player()
 generate_chunk(chunk_x, chunk_y)
+fade_out(2000, false)
 game.onUpdate(function () {
     for (let sprite of sprites.allOfKind(SpriteKind.Player)) {
         sprite.z = sprite.bottom
