@@ -3,6 +3,11 @@ namespace SpriteKind {
     export const GroundObject = SpriteKind.create()
     export const WalkableObject = SpriteKind.create()
 }
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (can_move) {
+        sprite_player.vy = -50
+    }
+})
 function make_rng (seed: number, x: number, y: number) {
     output = parseFloat("" + Math.abs(seed) + Math.abs(x) + Math.abs(y))
     if (x < 0) {
@@ -14,6 +19,11 @@ function make_rng (seed: number, x: number, y: number) {
     console.log("Chunk seed is " + output + " (Seed: " + seed + ", X: " + x + ", Y: " + y + ")")
     return Random.createRNG(output)
 }
+controller.down.onEvent(ControllerButtonEvent.Released, function () {
+    if (can_move) {
+        sprite_player.vy = 0
+    }
+})
 function generate_chunk (x: number, y: number) {
     clear_chunk()
     chunk_rng = make_rng(user_seed, x, y)
@@ -45,7 +55,7 @@ function make_main_player () {
         . . . . . f f f f f f . . . . . 
         . . . . . f f . . f f . . . . . 
         `, SpriteKind.Player)
-    controller.moveSprite(sprite_player, 50, 50)
+    enable_controls(true)
     character.loopFrames(
     sprite_player,
     [img`
@@ -299,6 +309,21 @@ function make_main_player () {
     character.rule(Predicate.NotMoving, Predicate.FacingRight)
     )
 }
+controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (can_move) {
+        sprite_player.vx = -50
+    }
+})
+controller.right.onEvent(ControllerButtonEvent.Released, function () {
+    if (can_move) {
+        sprite_player.vx = 0
+    }
+})
+controller.left.onEvent(ControllerButtonEvent.Released, function () {
+    if (can_move) {
+        sprite_player.vx = 0
+    }
+})
 function fade_out (delay: number, blocking: boolean) {
     color.startFade(color.Black, color.originalPalette, delay)
     if (blocking) {
@@ -356,6 +381,11 @@ function make_plains () {
         }
     }
 }
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (can_move) {
+        sprite_player.vx = 50
+    }
+})
 function make_forest () {
     scene.setBackgroundColor(7)
     for (let y = 0; y <= (scene.screenHeight() - 1) / 2; y++) {
@@ -390,11 +420,21 @@ function make_forest () {
         }
     }
 }
+controller.up.onEvent(ControllerButtonEvent.Released, function () {
+    if (can_move) {
+        sprite_player.vy = 0
+    }
+})
+controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (can_move) {
+        sprite_player.vy = 50
+    }
+})
 function enable_controls (en: boolean) {
     if (en) {
-        controller.moveSprite(sprite_player, 50, 50)
+        can_move = true
     } else {
-        controller.moveSprite(sprite_player, 0, 0)
+        can_move = false
     }
 }
 function make_dark_forest () {
@@ -431,10 +471,11 @@ function make_dark_forest () {
 }
 let sprite_object: Sprite = null
 let object_number = 0
-let sprite_player: Sprite = null
 let biome_number = 0
 let chunk_rng: FastRandomBlocks = null
 let output = 0
+let sprite_player: Sprite = null
+let can_move = false
 let user_seed = 0
 user_seed = 1234
 let chunk_x = 0
