@@ -5,15 +5,13 @@ namespace SpriteKind {
 }
 function make_rng (seed: number, x: number, y: number) {
     output = parseFloat("" + Math.abs(seed) + Math.abs(x) + Math.abs(y))
-    if (seed < 0) {
+    if (x < 0) {
         output = output * 10
     }
-    if (x < 0) {
+    if (y < 0) {
         output = output * 100
     }
-    if (y < 0) {
-        output = output * 1000
-    }
+    console.log("Chunk seed is " + output + " (Seed: " + seed + ", X: " + x + ", Y: " + y + ")")
     return Random.createRNG(output)
 }
 function generate_chunk (x: number, y: number) {
