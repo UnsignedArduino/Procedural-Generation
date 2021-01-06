@@ -4,7 +4,17 @@ namespace SpriteKind {
     export const WalkableObject = SpriteKind.create()
 }
 function make_rng (seed: number, x: number, y: number) {
-    return Random.createRNG(parseFloat("" + seed + x + y))
+    output = parseFloat("" + Math.abs(seed) + Math.abs(x) + Math.abs(y))
+    if (seed < 0) {
+        output = output * 10
+    }
+    if (x < 0) {
+        output = output * 100
+    }
+    if (y < 0) {
+        output = output * 1000
+    }
+    return Random.createRNG(output)
 }
 function generate_chunk (x: number, y: number) {
     clear_chunk()
@@ -349,7 +359,7 @@ function make_forest () {
                 } else if (object_number < 45) {
                     sprite_object = sprites.create(sprites.castle.tileGrass2, SpriteKind.GroundObject)
                 } else if (object_number < 60) {
-                    sprite_object = sprites.create(sprites.builtin.forestMushroomPatch, SpriteKind.GroundObject)
+                    sprite_object = sprites.create(sprites.builtin.forestScenery3, SpriteKind.GroundObject)
                 } else if (object_number < 75) {
                     sprite_object = sprites.create(sprites.builtin.forestScenery1, SpriteKind.GroundObject)
                 } else {
@@ -370,6 +380,13 @@ function make_forest () {
         }
     }
 }
+function enable_controls (en: boolean) {
+    if (en) {
+        controller.moveSprite(sprite_player, 50, 50)
+    } else {
+        controller.moveSprite(sprite_player, 0, 0)
+    }
+}
 function make_dark_forest () {
     scene.setBackgroundColor(6)
     for (let y = 0; y <= (scene.screenHeight() - 1) / 2; y++) {
@@ -383,7 +400,7 @@ function make_dark_forest () {
                 } else if (object_number < 45) {
                     sprite_object = sprites.create(sprites.castle.tileDarkGrass2, SpriteKind.GroundObject)
                 } else if (object_number < 60) {
-                    sprite_object = sprites.create(sprites.builtin.forestMushroomPatch, SpriteKind.GroundObject)
+                    sprite_object = sprites.create(sprites.builtin.forestScenery3, SpriteKind.GroundObject)
                 } else if (object_number < 75) {
                     sprite_object = sprites.create(sprites.builtin.forestScenery1, SpriteKind.GroundObject)
                 } else {
@@ -407,10 +424,14 @@ let object_number = 0
 let sprite_player: Sprite = null
 let biome_number = 0
 let chunk_rng: FastRandomBlocks = null
+let output = 0
 let user_seed = 0
 user_seed = 1234
+let chunk_x = 0
+let chunk_y = 0
+let updating_chunk = false
 make_main_player()
-generate_chunk(0, 0)
+generate_chunk(chunk_x, chunk_y)
 game.onUpdate(function () {
     for (let sprite of sprites.allOfKind(SpriteKind.Player)) {
         sprite.z = sprite.bottom
@@ -423,5 +444,33 @@ game.onUpdate(function () {
     }
     for (let sprite of sprites.allOfKind(SpriteKind.Object)) {
         sprite.z = sprite.bottom
+    }
+})
+forever(function () {
+    if (sprite_player.top > scene.screenHeight() && !(updating_chunk)) {
+        updating_chunk = true
+        enable_controls(false)
+        chunk_y += 1
+        generate_chunk(chunk_x, chunk_y)
+        sprite_player.bottom = 0
+        sprite_player.vy = 50
+        pause(300)
+        sprite_player.vy = 0
+        enable_controls(true)
+        updating_chunk = false
+    }
+})
+forever(function () {
+    if (sprite_player.bottom < 0 && !(updating_chunk)) {
+        updating_chunk = true
+        enable_controls(false)
+        chunk_y += -1
+        generate_chunk(chunk_x, chunk_y)
+        sprite_player.top = scene.screenHeight()
+        sprite_player.vy = -50
+        pause(300)
+        sprite_player.vy = 0
+        enable_controls(true)
+        updating_chunk = false
     }
 })

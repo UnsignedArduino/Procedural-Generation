@@ -4,7 +4,8 @@
     "dependencies": {
         "device": "*",
         "FastRandomBlocks": "github:unsignedarduino/fast-random-blocks#8c985a77e5c4278e43a7bc375db095c67afb58ed",
-        "character-animations": "github:riknoll/character-animations#v0.3.0"
+        "character-animations": "github:riknoll/character-animations#v0.3.0",
+        "Timers": "github:microsoft/arcade-timers#v1.1.0"
     },
     "files": [
         "main.blocks",
