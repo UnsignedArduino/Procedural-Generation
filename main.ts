@@ -429,6 +429,8 @@ function make_dark_forest () {
         }
     }
 }
+let can_move_down = false
+let can_move_up = false
 let can_move = false
 let sprite_object: Sprite = null
 let object_number = 0
@@ -441,6 +443,7 @@ timer.background(function () {
     fade_out(2000, true)
 })
 user_seed = Math.abs(game.askForNumber("Enter a seed:"))
+color.pauseUntilFadeDone()
 color.setPalette(
 color.Black
 )
@@ -509,9 +512,33 @@ forever(function () {
             sprite_player.vx = 0
         }
         if (controller.up.isPressed()) {
-            sprite_player.vy = -50
+            can_move_up = true
+            for (let sprite of sprites.allOfKind(SpriteKind.Object)) {
+                if (sprite_player.overlapsWith(sprite)) {
+                    if (Math.abs(sprite_player.bottom - sprite.bottom) < 2) {
+                        can_move_up = false
+                    }
+                }
+            }
+            if (can_move_up) {
+                sprite_player.vy = -50
+            } else {
+                sprite_player.vy = 0
+            }
         } else if (controller.down.isPressed()) {
-            sprite_player.vy = 50
+            can_move_down = true
+            for (let sprite of sprites.allOfKind(SpriteKind.Object)) {
+                if (sprite_player.overlapsWith(sprite)) {
+                    if (Math.abs(sprite_player.bottom - sprite.bottom) < 2) {
+                        can_move_down = false
+                    }
+                }
+            }
+            if (can_move_down) {
+                sprite_player.vy = 50
+            } else {
+                sprite_player.vy = 0
+            }
         } else {
             sprite_player.vy = 0
         }
