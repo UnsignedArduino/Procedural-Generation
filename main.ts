@@ -437,7 +437,10 @@ let biome_number = 0
 let chunk_rng: FastRandomBlocks = null
 let output = 0
 let user_seed = 0
-user_seed = 1234
+user_seed = game.askForNumber("Enter a seed:")
+if (user_seed != user_seed) {
+    user_seed = randint(0, 65535)
+}
 let chunk_x = 0
 let chunk_y = 0
 let updating_chunk = false
