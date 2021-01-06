@@ -1,0 +1,27 @@
+{
+    "name": "Procedural Generation",
+    "description": "",
+    "dependencies": {
+        "device": "*",
+        "FastRandomBlocks": "github:unsignedarduino/fast-random-blocks#8c985a77e5c4278e43a7bc375db095c67afb58ed",
+        "character-animations": "github:riknoll/character-animations#v0.3.0"
+    },
+    "files": [
+        "main.blocks",
+        "main.ts",
+        "README.md",
+        "tilemap.g.jres",
+        "tilemap.g.ts"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "targetVersions": {
+        "target": "1.2.16",
+        "targetId": "arcade"
+    },
+    "supportedTargets": [
+        "arcade"
+    ],
+    "preferredEditor": "blocksprj"
+}
