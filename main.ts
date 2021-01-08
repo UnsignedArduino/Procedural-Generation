@@ -401,6 +401,15 @@ function enable_controls (en: boolean) {
         can_move = false
     }
 }
+controller.menu.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (menu_opened) {
+        menu_opened = false
+        blockMenu.closeMenu()
+    } else {
+        menu_opened = true
+        blockMenu.showMenu(["Close", "Show seed", "Show chunk location"], MenuStyle.List, MenuLocation.BottomHalf)
+    }
+})
 function make_dark_forest () {
     scene.setBackgroundColor(6)
     for (let y = 0; y <= (scene.screenHeight() - 1) / 2; y++) {
@@ -432,6 +441,17 @@ function make_dark_forest () {
         }
     }
 }
+blockMenu.onMenuOptionSelected(function (option, index) {
+    menu_opened = false
+    blockMenu.closeMenu()
+    if (blockMenu.selectedMenuIndex() == 0) {
+    	
+    } else if (blockMenu.selectedMenuIndex() == 1) {
+        game.showLongText("Seed: " + user_seed, DialogLayout.Bottom)
+    } else if (blockMenu.selectedMenuIndex() == 2) {
+        game.showLongText("Chunk X: " + chunk_x + "\\nChunk Y: " + chunk_y, DialogLayout.Bottom)
+    }
+})
 let can_move_down = false
 let can_move_up = false
 let can_move = false
@@ -444,6 +464,10 @@ let sprite_object: Sprite = null
 let chunk_y = 0
 let chunk_x = 0
 let user_seed = 0
+let menu_opened = false
+menu_opened = false
+blockMenu.setControlsEnabled(false)
+blockMenu.setColors(1, 15)
 timer.background(function () {
     fade_out(2000, true)
 })
@@ -461,18 +485,19 @@ let updating_chunk = false
 make_main_player()
 generate_chunk(chunk_x, chunk_y)
 fade_out(2000, false)
+blockMenu.setControlsEnabled(true)
 game.onUpdate(function () {
     for (let sprite of sprites.allOfKind(SpriteKind.Player)) {
-        sprite.z = sprite.bottom
+        sprite.z = sprite.bottom - 100
     }
     for (let sprite of sprites.allOfKind(SpriteKind.GroundObject)) {
         sprite.z = -100000000000000000000
     }
     for (let sprite of sprites.allOfKind(SpriteKind.WalkableObject)) {
-        sprite.z = sprite.bottom
+        sprite.z = sprite.bottom - 100
     }
     for (let sprite of sprites.allOfKind(SpriteKind.Object)) {
-        sprite.z = sprite.bottom
+        sprite.z = sprite.bottom - 100
     }
 })
 forever(function () {
@@ -524,6 +549,22 @@ forever(function () {
     }
 })
 forever(function () {
+    if (sprite_player.left > scene.screenWidth() && !(updating_chunk)) {
+        updating_chunk = true
+        enable_controls(false)
+        fade_in(300, true)
+        chunk_x += 1
+        generate_chunk(chunk_x, chunk_y)
+        sprite_player.right = 0
+        fade_out(300, false)
+        sprite_player.vx = 50
+        pause(300)
+        sprite_player.vx = 0
+        enable_controls(true)
+        updating_chunk = false
+    }
+})
+forever(function () {
     if (can_move) {
         if (controller.left.isPressed()) {
             sprite_player.vx = -50
@@ -563,21 +604,12 @@ forever(function () {
         } else {
             sprite_player.vy = 0
         }
+    } else {
+        sprite_player.vx = 0
+        sprite_player.vy = 0
     }
 })
 forever(function () {
-    if (sprite_player.left > scene.screenWidth() && !(updating_chunk)) {
-        updating_chunk = true
-        enable_controls(false)
-        fade_in(300, true)
-        chunk_x += 1
-        generate_chunk(chunk_x, chunk_y)
-        sprite_player.right = 0
-        fade_out(300, false)
-        sprite_player.vx = 50
-        pause(300)
-        sprite_player.vx = 0
-        enable_controls(true)
-        updating_chunk = false
-    }
+    can_move = !(menu_opened)
+    pause(100)
 })
