@@ -3,6 +3,12 @@ namespace SpriteKind {
     export const GroundObject = SpriteKind.create()
     export const WalkableObject = SpriteKind.create()
 }
+function summon_object (image2: Image, _type: number, x: number, y: number) {
+    sprite_object = sprites.create(image2, _type)
+    sprite_object.setPosition(x, y)
+    sprites.setDataString(sprite_object, "id", "" + biome_number + "-" + chunk_x + "-" + chunk_y + "-" + x + "-" + y)
+    console.log("Sprite summoned in at " + x + ", " + y + " with ID " + sprites.readDataNumber(sprite_object, "id"))
+}
 function make_rng (seed: number, x: number, y: number) {
     output = parseFloat("" + Math.abs(seed) + Math.abs(x) + Math.abs(y))
     if (x < 0) {
@@ -329,29 +335,28 @@ function make_plains () {
             if (chunk_rng.percentChance(1)) {
                 object_number = chunk_rng.randomRange(0, 99)
                 if (object_number < 15) {
-                    sprite_object = sprites.create(sprites.castle.tileGrass1, SpriteKind.GroundObject)
+                    summon_object(sprites.castle.tileGrass1, SpriteKind.GroundObject, x * 2, y * 2)
                 } else if (object_number < 30) {
-                    sprite_object = sprites.create(sprites.castle.tileGrass3, SpriteKind.GroundObject)
+                    summon_object(sprites.castle.tileGrass3, SpriteKind.GroundObject, x * 2, y * 2)
                 } else if (object_number < 45) {
-                    sprite_object = sprites.create(sprites.castle.tileGrass2, SpriteKind.GroundObject)
+                    summon_object(sprites.castle.tileGrass2, SpriteKind.GroundObject, x * 2, y * 2)
                 } else if (object_number < 60) {
-                    sprite_object = sprites.create(sprites.builtin.forestFlowers0, SpriteKind.WalkableObject)
+                    summon_object(sprites.builtin.forestFlowers0, SpriteKind.WalkableObject, x * 2, y * 2)
                 } else if (object_number < 75) {
-                    sprite_object = sprites.create(sprites.builtin.forestFlowers1, SpriteKind.WalkableObject)
+                    summon_object(sprites.builtin.forestFlowers1, SpriteKind.WalkableObject, x * 2, y * 2)
                 } else {
                     if (chunk_rng.percentChance(20)) {
-                        sprite_object = sprites.create(sprites.duck.tree, SpriteKind.Object)
+                        summon_object(sprites.duck.tree, SpriteKind.Object, x * 2, y * 2)
                     } else if (chunk_rng.percentChance(25)) {
-                        sprite_object = sprites.create(sprites.castle.treePine, SpriteKind.Object)
+                        summon_object(sprites.castle.treePine, SpriteKind.Object, x * 2, y * 2)
                     } else if (chunk_rng.percentChance(33)) {
-                        sprite_object = sprites.create(sprites.castle.treeOak, SpriteKind.Object)
+                        summon_object(sprites.castle.treeOak, SpriteKind.Object, x * 2, y * 2)
                     } else if (chunk_rng.percentChance(50)) {
-                        sprite_object = sprites.create(sprites.castle.treeSmallPine, SpriteKind.Object)
+                        summon_object(sprites.castle.treeSmallPine, SpriteKind.Object, x * 2, y * 2)
                     } else {
-                        sprite_object = sprites.create(sprites.builtin.forestTree1, SpriteKind.Object)
+                        summon_object(sprites.builtin.forestTree1, SpriteKind.Object, x * 2, y * 2)
                     }
                 }
-                sprite_object.setPosition(x * 2, y * 2)
             }
         }
     }
@@ -363,29 +368,28 @@ function make_forest () {
             if (chunk_rng.percentChance(1)) {
                 object_number = chunk_rng.randomRange(0, 99)
                 if (object_number < 15) {
-                    sprite_object = sprites.create(sprites.castle.tileGrass1, SpriteKind.GroundObject)
+                    summon_object(sprites.castle.tileGrass1, SpriteKind.GroundObject, x * 2, y * 2)
                 } else if (object_number < 30) {
-                    sprite_object = sprites.create(sprites.castle.tileGrass3, SpriteKind.GroundObject)
+                    summon_object(sprites.castle.tileGrass3, SpriteKind.GroundObject, x * 2, y * 2)
                 } else if (object_number < 45) {
-                    sprite_object = sprites.create(sprites.castle.tileGrass2, SpriteKind.GroundObject)
+                    summon_object(sprites.castle.tileGrass2, SpriteKind.GroundObject, x * 2, y * 2)
                 } else if (object_number < 60) {
-                    sprite_object = sprites.create(sprites.builtin.forestScenery3, SpriteKind.WalkableObject)
+                    summon_object(sprites.builtin.forestScenery3, SpriteKind.WalkableObject, x * 2, y * 2)
                 } else if (object_number < 75) {
-                    sprite_object = sprites.create(sprites.builtin.forestScenery1, SpriteKind.Object)
+                    summon_object(sprites.builtin.forestScenery1, SpriteKind.Object, x * 2, y * 2)
                 } else {
                     if (chunk_rng.percentChance(20)) {
-                        sprite_object = sprites.create(sprites.duck.tree, SpriteKind.Object)
+                        summon_object(sprites.duck.tree, SpriteKind.Object, x * 2, y * 2)
                     } else if (chunk_rng.percentChance(25)) {
-                        sprite_object = sprites.create(sprites.castle.treePine, SpriteKind.Object)
+                        summon_object(sprites.castle.treePine, SpriteKind.Object, x * 2, y * 2)
                     } else if (chunk_rng.percentChance(33)) {
-                        sprite_object = sprites.create(sprites.castle.treeOak, SpriteKind.Object)
+                        summon_object(sprites.castle.treeOak, SpriteKind.Object, x * 2, y * 2)
                     } else if (chunk_rng.percentChance(50)) {
-                        sprite_object = sprites.create(sprites.castle.treeSmallPine, SpriteKind.Object)
+                        summon_object(sprites.castle.treeSmallPine, SpriteKind.Object, x * 2, y * 2)
                     } else {
-                        sprite_object = sprites.create(sprites.builtin.forestTree1, SpriteKind.Object)
+                        summon_object(sprites.builtin.forestTree1, SpriteKind.Object, x * 2, y * 2)
                     }
                 }
-                sprite_object.setPosition(x * 2, y * 2)
             }
         }
     }
@@ -404,27 +408,26 @@ function make_dark_forest () {
             if (chunk_rng.percentChance(1)) {
                 object_number = chunk_rng.randomRange(0, 99)
                 if (object_number < 15) {
-                    sprite_object = sprites.create(sprites.castle.tileDarkGrass1, SpriteKind.GroundObject)
+                    summon_object(sprites.castle.tileDarkGrass1, SpriteKind.GroundObject, x * 2, y * 2)
                 } else if (object_number < 30) {
-                    sprite_object = sprites.create(sprites.castle.tileDarkGrass3, SpriteKind.GroundObject)
+                    summon_object(sprites.castle.tileDarkGrass3, SpriteKind.GroundObject, x * 2, y * 2)
                 } else if (object_number < 45) {
-                    sprite_object = sprites.create(sprites.castle.tileDarkGrass2, SpriteKind.GroundObject)
+                    summon_object(sprites.castle.tileDarkGrass2, SpriteKind.GroundObject, x * 2, y * 2)
                 } else if (object_number < 60) {
-                    sprite_object = sprites.create(sprites.builtin.forestScenery3, SpriteKind.WalkableObject)
+                    summon_object(sprites.builtin.forestScenery3, SpriteKind.WalkableObject, x * 2, y * 2)
                 } else if (object_number < 75) {
-                    sprite_object = sprites.create(sprites.builtin.forestScenery1, SpriteKind.Object)
+                    summon_object(sprites.builtin.forestScenery1, SpriteKind.Object, x * 2, y * 2)
                 } else {
                     if (chunk_rng.percentChance(25)) {
-                        sprite_object = sprites.create(sprites.builtin.forestTree1, SpriteKind.Object)
+                        summon_object(sprites.builtin.forestTree1, SpriteKind.Object, x * 2, y * 2)
                     } else if (chunk_rng.percentChance(33)) {
-                        sprite_object = sprites.create(sprites.builtin.forestTree0, SpriteKind.Object)
+                        summon_object(sprites.builtin.forestTree0, SpriteKind.Object, x * 2, y * 2)
                     } else if (chunk_rng.percentChance(50)) {
-                        sprite_object = sprites.create(sprites.builtin.forestTree2, SpriteKind.Object)
+                        summon_object(sprites.builtin.forestTree2, SpriteKind.Object, x * 2, y * 2)
                     } else {
-                        sprite_object = sprites.create(sprites.builtin.forestTree3, SpriteKind.Object)
+                        summon_object(sprites.builtin.forestTree3, SpriteKind.Object, x * 2, y * 2)
                     }
                 }
-                sprite_object.setPosition(x * 2, y * 2)
             }
         }
     }
@@ -432,12 +435,14 @@ function make_dark_forest () {
 let can_move_down = false
 let can_move_up = false
 let can_move = false
-let sprite_object: Sprite = null
 let object_number = 0
 let sprite_player: Sprite = null
-let biome_number = 0
 let chunk_rng: FastRandomBlocks = null
 let output = 0
+let biome_number = 0
+let sprite_object: Sprite = null
+let chunk_y = 0
+let chunk_x = 0
 let user_seed = 0
 timer.background(function () {
     fade_out(2000, true)
@@ -450,8 +455,8 @@ color.Black
 if (user_seed != user_seed) {
     user_seed = randint(0, 65535)
 }
-let chunk_x = 0
-let chunk_y = 0
+chunk_x = 0
+chunk_y = 0
 let updating_chunk = false
 make_main_player()
 generate_chunk(chunk_x, chunk_y)
@@ -503,6 +508,22 @@ forever(function () {
     }
 })
 forever(function () {
+    if (sprite_player.bottom < 0 && !(updating_chunk)) {
+        updating_chunk = true
+        enable_controls(false)
+        fade_in(300, true)
+        chunk_y += -1
+        generate_chunk(chunk_x, chunk_y)
+        sprite_player.top = scene.screenHeight()
+        fade_out(300, false)
+        sprite_player.vy = -50
+        pause(300)
+        sprite_player.vy = 0
+        enable_controls(true)
+        updating_chunk = false
+    }
+})
+forever(function () {
     if (can_move) {
         if (controller.left.isPressed()) {
             sprite_player.vx = -50
@@ -542,22 +563,6 @@ forever(function () {
         } else {
             sprite_player.vy = 0
         }
-    }
-})
-forever(function () {
-    if (sprite_player.bottom < 0 && !(updating_chunk)) {
-        updating_chunk = true
-        enable_controls(false)
-        fade_in(300, true)
-        chunk_y += -1
-        generate_chunk(chunk_x, chunk_y)
-        sprite_player.top = scene.screenHeight()
-        fade_out(300, false)
-        sprite_player.vy = -50
-        pause(300)
-        sprite_player.vy = 0
-        enable_controls(true)
-        updating_chunk = false
     }
 })
 forever(function () {
