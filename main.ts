@@ -8,6 +8,11 @@ function summon_object (image2: Image, _type: number, x: number, y: number, hard
     sprite_object.setPosition(x, y)
     sprites.setDataNumber(sprite_object, "durability", hardness)
     sprites.setDataBoolean(sprite_object, "destroying", false)
+    sprites.setDataNumber(sprite_object, "health", hardness)
+    sprite_statusbar = statusbars.create(10, 2, StatusBarKind.Health)
+    sprite_statusbar.attachToSprite(sprite_object)
+    sprite_statusbar.max = hardness
+    sprite_statusbar.setColor(5, 0)
     sprites.setDataString(sprite_object, "id", "" + biome_number + "-" + chunk_x + "-" + chunk_y + "-" + x + "-" + y)
     console.log("Sprite summoned in at " + x + ", " + y + " with ID " + sprites.readDataNumber(sprite_object, "id"))
 }
@@ -19,7 +24,6 @@ function make_rng (seed: number, x: number, y: number) {
     if (y < 0) {
         output = output * 100
     }
-    output = Math.constrain(output, 0, 65535)
     console.log("Chunk seed is " + output + " (Seed: " + seed + ", X: " + x + ", Y: " + y + ")")
     return Random.createRNG(output)
 }
@@ -34,6 +38,20 @@ function generate_chunk (x: number, y: number) {
     } else {
         make_dark_forest()
     }
+}
+function get_overlapping_objects (sprite_target: Sprite) {
+    overlapping_sprites = []
+    for (let sprite of sprites.allOfKind(SpriteKind.WalkableObject)) {
+        if (sprite_target.overlapsWith(sprite)) {
+            overlapping_sprites.push(sprite)
+        }
+    }
+    for (let sprite of sprites.allOfKind(SpriteKind.Object)) {
+        if (sprite_target.overlapsWith(sprite)) {
+            overlapping_sprites.push(sprite)
+        }
+    }
+    return overlapping_sprites
 }
 function fade_out (delay: number, blocking: boolean) {
     color.startFade(color.Black, color.originalPalette, delay)
@@ -76,21 +94,24 @@ function make_plains () {
                     summon_object(sprites.builtin.forestFlowers1, SpriteKind.WalkableObject, x * 2, y * 2, 1)
                 } else {
                     if (chunk_rng.percentChance(20)) {
-                        summon_object(sprites.duck.tree, SpriteKind.Object, x * 2, y * 2, 1)
+                        summon_object(sprites.duck.tree, SpriteKind.Object, x * 2, y * 2, 20)
                     } else if (chunk_rng.percentChance(25)) {
-                        summon_object(sprites.castle.treePine, SpriteKind.Object, x * 2, y * 2, 1)
+                        summon_object(sprites.castle.treePine, SpriteKind.Object, x * 2, y * 2, 20)
                     } else if (chunk_rng.percentChance(33)) {
-                        summon_object(sprites.castle.treeOak, SpriteKind.Object, x * 2, y * 2, 1)
+                        summon_object(sprites.castle.treeOak, SpriteKind.Object, x * 2, y * 2, 20)
                     } else if (chunk_rng.percentChance(50)) {
-                        summon_object(sprites.castle.treeSmallPine, SpriteKind.Object, x * 2, y * 2, 1)
+                        summon_object(sprites.castle.treeSmallPine, SpriteKind.Object, x * 2, y * 2, 10)
                     } else {
-                        summon_object(sprites.builtin.forestTree1, SpriteKind.Object, x * 2, y * 2, 1)
+                        summon_object(sprites.builtin.forestTree1, SpriteKind.Object, x * 2, y * 2, 30)
                     }
                 }
             }
         }
     }
 }
+statusbars.onZero(StatusBarKind.Health, function (status) {
+    status.spriteAttachedTo().destroy(effects.ashes, 100)
+})
 function make_forest () {
     scene.setBackgroundColor(7)
     for (let y = 0; y <= (scene.screenHeight() - 1) / 2; y++) {
@@ -106,18 +127,18 @@ function make_forest () {
                 } else if (object_number < 60) {
                     summon_object(sprites.builtin.forestScenery3, SpriteKind.WalkableObject, x * 2, y * 2, 1)
                 } else if (object_number < 75) {
-                    summon_object(sprites.builtin.forestScenery1, SpriteKind.Object, x * 2, y * 2, 1)
+                    summon_object(sprites.builtin.forestScenery1, SpriteKind.Object, x * 2, y * 2, 5)
                 } else {
                     if (chunk_rng.percentChance(20)) {
-                        summon_object(sprites.duck.tree, SpriteKind.Object, x * 2, y * 2, 1)
+                        summon_object(sprites.duck.tree, SpriteKind.Object, x * 2, y * 2, 20)
                     } else if (chunk_rng.percentChance(25)) {
-                        summon_object(sprites.castle.treePine, SpriteKind.Object, x * 2, y * 2, 1)
+                        summon_object(sprites.castle.treePine, SpriteKind.Object, x * 2, y * 2, 20)
                     } else if (chunk_rng.percentChance(33)) {
-                        summon_object(sprites.castle.treeOak, SpriteKind.Object, x * 2, y * 2, 1)
+                        summon_object(sprites.castle.treeOak, SpriteKind.Object, x * 2, y * 2, 20)
                     } else if (chunk_rng.percentChance(50)) {
-                        summon_object(sprites.castle.treeSmallPine, SpriteKind.Object, x * 2, y * 2, 1)
+                        summon_object(sprites.castle.treeSmallPine, SpriteKind.Object, x * 2, y * 2, 10)
                     } else {
-                        summon_object(sprites.builtin.forestTree1, SpriteKind.Object, x * 2, y * 2, 1)
+                        summon_object(sprites.builtin.forestTree1, SpriteKind.Object, x * 2, y * 2, 30)
                     }
                 }
             }
@@ -144,6 +165,8 @@ function make_player () {
         . . . . . f f . . f f . . . . . 
         `, SpriteKind.Player)
     enable_controls(true)
+    sprites.setDataBoolean(sprite_player, "destroying", false)
+    sprites.setDataSprite(sprite_player, "destroying_sprite", null)
     character.loopFrames(
     sprite_player,
     [img`
@@ -429,16 +452,16 @@ function make_dark_forest () {
                 } else if (object_number < 60) {
                     summon_object(sprites.builtin.forestScenery3, SpriteKind.WalkableObject, x * 2, y * 2, 1)
                 } else if (object_number < 75) {
-                    summon_object(sprites.builtin.forestScenery1, SpriteKind.Object, x * 2, y * 2, 1)
+                    summon_object(sprites.builtin.forestScenery1, SpriteKind.Object, x * 2, y * 2, 5)
                 } else {
                     if (chunk_rng.percentChance(25)) {
-                        summon_object(sprites.builtin.forestTree1, SpriteKind.Object, x * 2, y * 2, 1)
+                        summon_object(sprites.builtin.forestTree1, SpriteKind.Object, x * 2, y * 2, 30)
                     } else if (chunk_rng.percentChance(33)) {
-                        summon_object(sprites.builtin.forestTree0, SpriteKind.Object, x * 2, y * 2, 1)
+                        summon_object(sprites.builtin.forestTree0, SpriteKind.Object, x * 2, y * 2, 30)
                     } else if (chunk_rng.percentChance(50)) {
-                        summon_object(sprites.builtin.forestTree2, SpriteKind.Object, x * 2, y * 2, 1)
+                        summon_object(sprites.builtin.forestTree2, SpriteKind.Object, x * 2, y * 2, 30)
                     } else {
-                        summon_object(sprites.builtin.forestTree3, SpriteKind.Object, x * 2, y * 2, 1)
+                        summon_object(sprites.builtin.forestTree3, SpriteKind.Object, x * 2, y * 2, 30)
                     }
                 }
             }
@@ -461,9 +484,11 @@ let can_move_up = false
 let can_move = false
 let sprite_player: Sprite = null
 let object_number = 0
+let overlapping_sprites: Sprite[] = []
 let chunk_rng: FastRandomBlocks = null
 let output = 0
 let biome_number = 0
+let sprite_statusbar: StatusBarSprite = null
 let sprite_object: Sprite = null
 let chunk_y = 0
 let chunk_x = 0
@@ -536,6 +561,38 @@ forever(function () {
         enable_controls(true)
         updating_chunk = false
     }
+})
+forever(function () {
+    for (let sprite of sprites.allOfKind(SpriteKind.GroundObject)) {
+        statusbars.getStatusBarAttachedTo(StatusBarKind.Health, sprite).setFlag(SpriteFlag.Invisible, true)
+    }
+    for (let sprite of sprites.allOfKind(SpriteKind.WalkableObject)) {
+        statusbars.getStatusBarAttachedTo(StatusBarKind.Health, sprite).value = sprites.readDataNumber(sprite, "health")
+        if (sprites.readDataBoolean(sprite, "destroying")) {
+            statusbars.getStatusBarAttachedTo(StatusBarKind.Health, sprite).setFlag(SpriteFlag.Invisible, false)
+            sprite.startEffect(effects.ashes, 100)
+        } else {
+            statusbars.getStatusBarAttachedTo(StatusBarKind.Health, sprite).setFlag(SpriteFlag.Invisible, true)
+        }
+        if (!(sprites.readDataBoolean(sprite, "destroying")) && sprites.readDataNumber(sprite, "health") < sprites.readDataNumber(sprite, "durability")) {
+            sprites.changeDataNumberBy(sprite, "health", 1)
+            statusbars.getStatusBarAttachedTo(StatusBarKind.Health, sprite).setFlag(SpriteFlag.Invisible, false)
+        }
+    }
+    for (let sprite of sprites.allOfKind(SpriteKind.Object)) {
+        statusbars.getStatusBarAttachedTo(StatusBarKind.Health, sprite).value = sprites.readDataNumber(sprite, "health")
+        if (sprites.readDataBoolean(sprite, "destroying")) {
+            statusbars.getStatusBarAttachedTo(StatusBarKind.Health, sprite).setFlag(SpriteFlag.Invisible, false)
+            sprite.startEffect(effects.ashes, 100)
+        } else {
+            statusbars.getStatusBarAttachedTo(StatusBarKind.Health, sprite).setFlag(SpriteFlag.Invisible, true)
+        }
+        if (!(sprites.readDataBoolean(sprite, "destroying")) && sprites.readDataNumber(sprite, "health") < sprites.readDataNumber(sprite, "durability")) {
+            sprites.changeDataNumberBy(sprite, "health", 1)
+            statusbars.getStatusBarAttachedTo(StatusBarKind.Health, sprite).setFlag(SpriteFlag.Invisible, false)
+        }
+    }
+    pause(100)
 })
 forever(function () {
     if (sprite_player.bottom < 0 && !(updating_chunk)) {
@@ -617,4 +674,22 @@ forever(function () {
 forever(function () {
     can_move = !(menu_opened)
     pause(100)
+})
+forever(function () {
+    if (controller.A.isPressed()) {
+        for (let sprite of get_overlapping_objects(sprite_player)) {
+            sprites.setDataBoolean(sprite, "destroying", false)
+        }
+        sprites.setDataBoolean(sprite_player, "destroying", false)
+        sprites.setDataBoolean(sprites.readDataSprite(sprite_player, "destroying_sprite"), "destroying", false)
+        if (get_overlapping_objects(sprite_player).length > 0) {
+            sprites.setDataBoolean(sprite_player, "destroying", true)
+            sprites.setDataSprite(sprite_player, "destroying_sprite", get_overlapping_objects(sprite_player)[0])
+            sprites.setDataBoolean(sprites.readDataSprite(sprite_player, "destroying_sprite"), "destroying", true)
+            if (sprites.readDataNumber(sprites.readDataSprite(sprite_player, "destroying_sprite"), "health") > 0) {
+                sprites.changeDataNumberBy(sprites.readDataSprite(sprite_player, "destroying_sprite"), "health", -1)
+            }
+        }
+    }
+    pause(500)
 })
