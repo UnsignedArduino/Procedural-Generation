@@ -396,6 +396,7 @@ function make_player () {
     300,
     character.rule(Predicate.NotMoving, Predicate.FacingRight)
     )
+    return sprite_player
 }
 function enable_controls (en: boolean) {
     if (en) {
