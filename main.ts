@@ -14,7 +14,10 @@ function summon_object (image2: Image, _type: number, x: number, y: number, hard
     sprite_statusbar.max = hardness
     sprite_statusbar.setColor(5, 0)
     sprites.setDataString(sprite_object, "id", "" + biome_number + "-" + chunk_x + "-" + chunk_y + "-" + x + "-" + y)
-    console.log("Sprite summoned in at " + x + ", " + y + " with ID " + sprites.readDataNumber(sprite_object, "id"))
+    console.log("Sprite summoned in at " + x + ", " + y + " with ID " + sprites.readDataString(sprite_object, "id"))
+    if (user_destroyed_objects.indexOf(sprites.readDataString(sprite_object, "id")) != -1) {
+        sprite_object.destroy()
+    }
 }
 function make_rng (seed: number, x: number, y: number) {
     output = parseFloat("" + Math.abs(seed) + Math.abs(x) + Math.abs(y))
@@ -111,6 +114,7 @@ function make_plains () {
 }
 statusbars.onZero(StatusBarKind.Health, function (status) {
     status.spriteAttachedTo().destroy(effects.ashes, 100)
+    user_destroyed_objects.push(sprites.readDataString(status.spriteAttachedTo(), "id"))
 })
 function make_forest () {
     scene.setBackgroundColor(7)
@@ -492,6 +496,7 @@ let sprite_statusbar: StatusBarSprite = null
 let sprite_object: Sprite = null
 let chunk_y = 0
 let chunk_x = 0
+let user_destroyed_objects: string[] = []
 let user_seed = 0
 let menu_opened = false
 menu_opened = false
@@ -509,6 +514,7 @@ if (user_seed != user_seed) {
     user_seed = randint(1, 65535)
 }
 user_seed = Math.abs(user_seed)
+user_destroyed_objects = []
 chunk_x = 0
 chunk_y = 0
 let updating_chunk = false
