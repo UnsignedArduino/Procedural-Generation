@@ -17,6 +17,7 @@ function make_rng (seed: number, x: number, y: number) {
     if (y < 0) {
         output = output * 100
     }
+    output = Math.constrain(output, 0, 65535)
     console.log("Chunk seed is " + output + " (Seed: " + seed + ", X: " + x + ", Y: " + y + ")")
     return Random.createRNG(output)
 }
@@ -471,14 +472,15 @@ blockMenu.setColors(1, 15)
 timer.background(function () {
     fade_out(2000, true)
 })
-user_seed = Math.abs(game.askForNumber("Enter a seed:"))
+user_seed = game.askForNumber("Enter a seed:")
 color.pauseUntilFadeDone()
 color.setPalette(
 color.Black
 )
 if (user_seed != user_seed) {
-    user_seed = randint(0, 65535)
+    user_seed = randint(1, 65535)
 }
+user_seed = Math.abs(user_seed)
 chunk_x = 0
 chunk_y = 0
 let updating_chunk = false
