@@ -510,7 +510,7 @@ color.pauseUntilFadeDone()
 color.setPalette(
 color.Black
 )
-if (user_seed != user_seed) {
+if (user_seed != user_seed || user_seed == 0) {
     user_seed = randint(1, 65535)
 }
 user_seed = Math.abs(user_seed)
